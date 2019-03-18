@@ -34,11 +34,13 @@ server.delete('/api/users/:id', (req, res) => {
 server.put('/api/users/:id', (req, res) => {
 	if (!req.params.id) {
 		res.status(404).json({ message: 'The user with the specified ID does not exist.' });
-	}
-	if (!req.body.name || !req.body.bio) {
+	} else if (!req.body.name || !req.body.bio) {
 		res.status(400).json({ errorMessage: 'Please provide name and bio for the user.' });
 	} else {
-		db.update(req.params.id, req.body).then((count) => res.status(200).send(count)).catch(res.status().json());
+		db
+			.update(req.params.id, req.body)
+			.then((count) => res.status(200).json(count))
+			.catch(() => res.status(500).json({ error: 'The user information could not be modified.' }));
 	}
 });
 
